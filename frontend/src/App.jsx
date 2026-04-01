@@ -1,120 +1,94 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [prompt, setPrompt] = useState('')
+  const [image, setImage] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) return
+
+    setIsLoading(true)
+    setError(null)
+    setImage(null)
+
+    try {
+      // Simulate API call to a text-to-image generator
+      // In a real app, this would be: 
+      // const response = await fetch('/api/generate', { method: 'POST', body: JSON.stringify({ prompt }) });
+      // const data = await response.json();
+      
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // Using a placeholder image with a random seed based on prompt
+      const seed = Math.floor(Math.random() * 1000000)
+      setImage(`https://picsum.photos/seed/${seed}/800/800`)
+      
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      <header className="header">
+        <h1>Imagine.</h1>
+        <p>Turn your thoughts into stunning visuals in seconds.</p>
+      </header>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <main className="generator-card">
+        <div className="input-group">
+          <textarea
+            className="prompt-input"
+            placeholder="A futuristic city with floating gardens and neon lights..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            disabled={isLoading}
+          />
+          <button
+            className="generate-btn"
+            onClick={handleGenerate}
+            disabled={isLoading || !prompt.trim()}
+          >
+            {isLoading ? (
+              <>
+                <span className="loader-small"></span>
+                Generating...
+              </>
+            ) : 'Generate'}
+          </button>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <section className="image-display">
+          {isLoading ? (
+            <div className="loader-container">
+              <span className="loader"></span>
+              <p>Crafting your image...</p>
+            </div>
+          ) : image ? (
+            <img 
+              src={image} 
+              alt={prompt} 
+              className="generated-image" 
+              loading="lazy"
+            />
+          ) : (
+            <div className="placeholder-text">
+              <p>Your creation will appear here.</p>
+              {error && <p style={{ color: '#ef4444', marginTop: '1rem' }}>{error}</p>}
+            </div>
+          )}
+        </section>
+      </main>
+
+      <footer style={{ marginTop: '2rem', fontSize: '0.9rem', color: '#64748b' }}>
+        Built with Google AI & React
+      </footer>
+    </div>
   )
 }
 
